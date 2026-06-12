@@ -78,7 +78,7 @@ h1{font-size:26px;font-weight:800;letter-spacing:.06em}
 .mini{font-size:10px;letter-spacing:.12em;color:var(--faint);font-weight:600}
 .unit{color:var(--muted);font-size:.62em;font-weight:400}
 
-.chart-container{height:70px;margin-top:auto;margin-left:-8px;margin-right:-8px;margin-bottom:-4px}
+.chart-container{height:70px;min-height:70px;width:100%;margin-top:auto;margin-left:-8px;margin-right:-8px;margin-bottom:-4px;position:relative}
 
 .duo{display:flex;gap:22px;flex-wrap:wrap}
 .pair{display:grid;grid-template-columns:1fr auto auto;gap:5px 14px;align-items:baseline}
@@ -416,6 +416,7 @@ async function fetchChartData() {
     }
   } catch(e) {
     console.error("Failed to fetch chart data", e);
+    if ($("btcChart")) $("btcChart").innerHTML = `<span style="font-size:10px;color:red">Chart Error: ${e.message}</span>`;
   }
 }
 
