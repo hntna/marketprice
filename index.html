@@ -78,7 +78,7 @@ h1{font-size:26px;font-weight:800;letter-spacing:.06em}
 .mini{font-size:10px;letter-spacing:.12em;color:var(--faint);font-weight:600}
 .unit{color:var(--muted);font-size:.62em;font-weight:400}
 
-.chart-container{height:70px;margin-top:auto;margin-left:-8px;margin-right:-8px;margin-bottom:-4px;pointer-events:none}
+.chart-container{height:70px;margin-top:auto;margin-left:-8px;margin-right:-8px;margin-bottom:-4px}
 
 .duo{display:flex;gap:22px;flex-wrap:wrap}
 .pair{display:grid;grid-template-columns:1fr auto auto;gap:5px 14px;align-items:baseline}
@@ -370,6 +370,7 @@ function seedBinance(){
 let btcChart, btcSeries, xauChart, xauSeries;
 function initCharts() {
   const chartOptions = {
+    autoSize: true,
     layout: { background: { type: 'solid', color: 'transparent' }, textColor: '#8B91A1' },
     grid: { vertLines: { visible: false }, horzLines: { visible: false } },
     rightPriceScale: { visible: false },
