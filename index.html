@@ -370,7 +370,6 @@ function seedBinance(){
 let btcChart, btcSeries, xauChart, xauSeries;
 function initCharts() {
   const chartOptions = {
-    autoSize: true,
     layout: { background: { type: 'solid', color: 'transparent' }, textColor: '#8B91A1' },
     grid: { vertLines: { visible: false }, horzLines: { visible: false } },
     rightPriceScale: { visible: false },
@@ -380,11 +379,22 @@ function initCharts() {
     handleScale: false,
   };
 
+  const ro = new ResizeObserver(entries => {
+    for (let entry of entries) {
+      const { width, height } = entry.contentRect;
+      if (width > 0 && height > 0) {
+        if (entry.target.id === "btcChart" && btcChart) btcChart.resize(width, height);
+        if (entry.target.id === "xauChart" && xauChart) xauChart.resize(width, height);
+      }
+    }
+  });
+
   if ($("btcChart") && !btcChart) {
     btcChart = LightweightCharts.createChart($("btcChart"), chartOptions);
     btcSeries = btcChart.addAreaSeries({
       lineColor: '#3DDC97', topColor: 'rgba(61,220,151,0.25)', bottomColor: 'rgba(61,220,151,0.0)', lineWidth: 2, priceLineVisible: false
     });
+    ro.observe($("btcChart"));
   }
 
   if ($("xauChart") && !xauChart) {
@@ -392,6 +402,7 @@ function initCharts() {
     xauSeries = xauChart.addAreaSeries({
       lineColor: '#F2B33D', topColor: 'rgba(242,179,61,0.25)', bottomColor: 'rgba(242,179,61,0.0)', lineWidth: 2, priceLineVisible: false
     });
+    ro.observe($("xauChart"));
   }
 }
 
@@ -427,12 +438,14 @@ function updateChartLive(symbol, price, timeMs) {
 }
 
 let wsRetry = 3000;
+let wsConnected = false;
 function connectWS(){
   let w;
   try{
     w = new WebSocket("wss://stream.binance.com:9443/stream?streams=btcusdt@miniTicker/paxgusdt@miniTicker");
   }catch(e){ setTimeout(connectWS, wsRetry = Math.min(wsRetry*1.5, 30000)); return; }
   w.onopen = () => {
+    wsConnected = true;
     wsRetry = 3000;
     $("liveDot").classList.add("on");
     setText("liveLabel", "Binance trực tiếp");
@@ -444,16 +457,17 @@ function connectWS(){
     renderLive();
   };
   w.onclose = () => {
+    wsConnected = false;
     $("liveDot").classList.remove("on");
-    setText("liveLabel", "mất kết nối — thử lại…");
+    setText("liveLabel", "mất kết nối WS — tải giá tĩnh…");
     setTimeout(connectWS, wsRetry = Math.min(wsRetry*1.5, 30000));
   };
   w.onerror = () => w.close();
 }
 
 setTimeout(() => {
-  if (S.btc == null) setText("liveLabel", "chưa kết nối được Binance — thử lại…");
-}, 8000);
+  if (!wsConnected) setText("liveLabel", "giá tĩnh (WebSocket bị chặn)");
+}, 5000);
 
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden){ loadJSON(); seedBinance(); }
