@@ -383,40 +383,55 @@ function initCharts() {
     }
   });
 
-  if ($("btcChart") && !btcChart) {
-    btcChart = LightweightCharts.createChart($("btcChart"), chartOptions);
-    btcSeries = btcChart.addAreaSeries({
-      lineColor: '#3DDC97', topColor: 'rgba(61,220,151,0.25)', bottomColor: 'rgba(61,220,151,0.0)', lineWidth: 2, priceLineVisible: false
-    });
-    ro.observe($("btcChart"));
+  const bEl = $("btcChart");
+  if (bEl && !btcChart) {
+    try {
+      const w = bEl.clientWidth || 300; const h = bEl.clientHeight || 70;
+      btcChart = LightweightCharts.createChart(bEl, Object.assign({width: w, height: h}, chartOptions));
+      btcSeries = btcChart.addAreaSeries({
+        lineColor: '#3DDC97', topColor: 'rgba(61,220,151,0.25)', bottomColor: 'rgba(61,220,151,0.0)', lineWidth: 2, priceLineVisible: false
+      });
+      ro.observe(bEl);
+    } catch(e) {
+      bEl.innerHTML = "<div style='color:red;font-size:10px;margin-top:20px'>BTC err: " + e.message + "</div>";
+    }
   }
 
-  if ($("xauChart") && !xauChart) {
-    xauChart = LightweightCharts.createChart($("xauChart"), chartOptions);
-    xauSeries = xauChart.addAreaSeries({
-      lineColor: '#F2B33D', topColor: 'rgba(242,179,61,0.25)', bottomColor: 'rgba(242,179,61,0.0)', lineWidth: 2, priceLineVisible: false
-    });
-    ro.observe($("xauChart"));
+  const xEl = $("xauChart");
+  if (xEl && !xauChart) {
+    try {
+      const w = xEl.clientWidth || 300; const h = xEl.clientHeight || 70;
+      xauChart = LightweightCharts.createChart(xEl, Object.assign({width: w, height: h}, chartOptions));
+      xauSeries = xauChart.addAreaSeries({
+        lineColor: '#F2B33D', topColor: 'rgba(242,179,61,0.25)', bottomColor: 'rgba(242,179,61,0.0)', lineWidth: 2, priceLineVisible: false
+      });
+      ro.observe(xEl);
+    } catch(e) {
+      xEl.innerHTML = "<div style='color:red;font-size:10px;margin-top:20px'>XAU err: " + e.message + "</div>";
+    }
   }
 }
 
 function fetchChartData() {
   if (!S.J) return;
-  try {
-    const mapData = (d) => ({ time: d[0] / 1000, value: d[1] });
-    const btcData = S.J.chart_btc || [];
-    const xauData = S.J.chart_xau || [];
-
-    if (btcSeries && btcData.length) {
-      btcSeries.setData(btcData.map(mapData));
+  const mapData = (d) => ({ time: d[0] / 1000, value: d[1] });
+  
+  if (btcSeries && S.J.chart_btc && S.J.chart_btc.length) {
+    try {
+      btcSeries.setData(S.J.chart_btc.map(mapData));
       btcChart.timeScale().fitContent();
+    } catch(e) {
+      $("btcChart").innerHTML = "<div style='color:red;font-size:10px;margin-top:20px'>BTC Data err: " + e.message + "</div>";
     }
-    if (xauSeries && xauData.length) {
-      xauSeries.setData(xauData.map(mapData));
+  }
+
+  if (xauSeries && S.J.chart_xau && S.J.chart_xau.length) {
+    try {
+      xauSeries.setData(S.J.chart_xau.map(mapData));
       xauChart.timeScale().fitContent();
+    } catch(e) {
+      $("xauChart").innerHTML = "<div style='color:red;font-size:10px;margin-top:20px'>XAU Data err: " + e.message + "</div>";
     }
-  } catch(e) {
-    console.error("Failed to render chart data", e);
   }
 }
 
