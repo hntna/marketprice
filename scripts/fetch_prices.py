@@ -230,6 +230,18 @@ def main():
             if prev.get(key):
                 data[key] = {**prev[key], "stale": True}
 
+    # Fetch chart data directly from Binance to avoid client-side AdBlockers
+    try:
+        btc_res = get("https://api.binance.com/api/v3/klines", params={"symbol": "BTCUSDT", "interval": "1h", "limit": 120}).json()
+        xau_res = get("https://api.binance.com/api/v3/klines", params={"symbol": "PAXGUSDT", "interval": "1h", "limit": 120}).json()
+        data["chart_btc"] = [[c[0], float(c[4])] for c in btc_res]
+        data["chart_xau"] = [[c[0], float(c[4])] for c in xau_res]
+        ok += 1
+    except Exception as e:
+        print(f"[warn] binance klines lỗi: {e}", file=sys.stderr)
+        if prev.get("chart_btc"): data["chart_btc"] = prev["chart_btc"]
+        if prev.get("chart_xau"): data["chart_xau"] = prev["chart_xau"]
+
     if ok == 0 and prev:
         print("Tất cả nguồn đều lỗi — giữ nguyên prices.json cũ.", file=sys.stderr)
         return 0
