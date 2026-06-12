@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0B0D12">
+<title>Bảng giá — Vàng · BTC · Dầu · USD/VND</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='%23F2B33D'/><circle cx='50' cy='50' r='30' fill='%230B0D12'/><circle cx='50' cy='50' r='18' fill='%23F2B33D'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0D12; --panel:#12151D; --panel-deep:#0C0F15; --line:#1E2433;
+  --ink:#EAE7DE; --muted:#8B91A1; --faint:#5A6072;
+  --amber:#F2B33D; --amber-dim:#9A7424;
+  --up:#3DDC97; --down:#FF6B6B;
+  --sans:'Be Vietnam Pro',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:dark}
+body{
+  font-family:var(--sans);color:var(--ink);min-height:100vh;
+  background:
+    radial-gradient(1100px 480px at 50% -180px, rgba(242,179,61,.075), transparent 62%),
+    var(--bg);
+  padding:20px 16px 36px;
+}
+.wrap{max-width:1080px;margin:0 auto}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ---------- header ---------- */
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+h1{font-size:26px;font-weight:800;letter-spacing:.06em}
+.subtitle{color:var(--muted);font-size:13px;margin-top:2px}
+.status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12.5px;font-family:var(--mono)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+.dot.on{background:var(--up);box-shadow:0 0 8px rgba(61,220,151,.7);animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.45}}
+.sep{color:var(--faint)}
+.notice{margin:0 0 14px;padding:10px 14px;border:1px solid var(--amber-dim);border-radius:10px;
+  color:var(--amber);font-size:13px;background:rgba(242,179,61,.06)}
+
+/* ---------- hàng trên: bảng chênh lệch + vàng TG ---------- */
+.row-top{display:grid;gap:14px;grid-template-columns:1fr;margin-bottom:14px}
+@media(min-width:880px){.row-top{grid-template-columns:1.65fr 1fr}}
+
+.board{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:14px;
+  background:linear-gradient(180deg,#0D1016,#090B10);
+  padding:20px 22px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;
+}
+.board::after{ /* vân quét kiểu bảng LED tiệm vàng */
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px);
+}
+.board-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.board-value{
+  font-size:clamp(38px,7vw,62px);font-weight:600;line-height:1.05;color:var(--amber);letter-spacing:.02em;
+  text-shadow:0 0 22px rgba(242,179,61,.32), 0 0 2px rgba(242,179,61,.55);
+}
+.board-sub{color:var(--muted);font-size:12.5px;line-height:1.6}
+
+/* ---------- cards ---------- */
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(235px,1fr))}
+.card{
+  border:1px solid var(--line);border-radius:14px;background:var(--panel);
+  padding:16px 18px 14px;display:flex;flex-direction:column;gap:8px;min-width:0;
+}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.label{font-size:11px;letter-spacing:.14em;color:var(--muted);font-weight:600}
+.tag{font-size:12.5px;color:var(--muted)}
+.tag.up{color:var(--up)} .tag.down{color:var(--down)}
+.value{font-size:27px;font-weight:600;letter-spacing:.01em}
+.value-sm{font-size:21px;font-weight:600}
+.sub{color:var(--faint);font-size:12px;line-height:1.55}
+.mini{font-size:10px;letter-spacing:.12em;color:var(--faint);font-weight:600}
+.unit{color:var(--muted);font-size:.62em;font-weight:400}
+
+.duo{display:flex;gap:22px;flex-wrap:wrap}
+.pair{display:grid;grid-template-columns:1fr auto auto;gap:5px 14px;align-items:baseline}
+.pair-name{font-size:13px;color:var(--muted)}
+.pair-num{font-size:16.5px;font-weight:600}
+.pair-num.sell{color:var(--amber)}
+.pair-h{font-size:10px;letter-spacing:.1em;color:var(--faint);font-weight:600}
+
+.stale{display:inline-block;margin-left:8px;padding:1px 7px;border:1px solid var(--amber-dim);
+  border-radius:99px;color:var(--amber);font-size:10px;letter-spacing:.1em;vertical-align:2px}
+
+@keyframes flashUp{0%{color:var(--up)}100%{color:var(--ink)}}
+@keyframes flashDown{0%{color:var(--down)}100%{color:var(--ink)}}
+.value.up{animation:flashUp 1.1s ease-out}
+.value.down{animation:flashDown 1.1s ease-out}
+
+footer{margin-top:22px;color:var(--faint);font-size:11.5px;line-height:1.7}
+footer b{color:var(--muted);font-weight:600}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <h1>BẢNG GIÁ</h1>
+    <div class="subtitle">Vàng · BTC · Dầu · USD/VND — nhìn một phát là xong</div>
+  </div>
+  <div class="status">
+    <span class="dot" id="liveDot"></span><span id="liveLabel">đang kết nối Binance…</span>
+    <span class="sep">·</span><span id="jsonTime">dữ liệu: —</span>
+  </div>
+</header>
+
+<div class="notice" id="jsonNote" hidden></div>
+
+<div class="row-top">
+  <section class="board">
+    <div class="board-head">
+      <span class="label">CHÊNH LỆCH VÀNG · TRONG NƯỚC − THẾ GIỚI</span>
+      <span class="tag mono" id="spreadPct"></span>
+    </div>
+    <div class="board-value mono" id="spreadVal">—</div>
+    <div class="board-sub mono" id="spreadCalc">chờ dữ liệu Binance + prices.json…</div>
+  </section>
+
+  <article class="card">
+    <div class="card-head">
+      <span class="label">VÀNG THẾ GIỚI</span>
+      <span class="tag mono" id="xauChg">24h —</span>
+    </div>
+    <div class="value mono" id="xauVal">—</div>
+    <div class="sub" id="xauSub">XAU/USD · proxy PAXG (Binance)</div>
+  </article>
+</div>
+
+<div class="grid">
+  <article class="card">
+    <div class="card-head">
+      <span class="label">VÀNG BTMH<span class="stale" id="btmhStale" hidden>CŨ</span></span>
+    </div>
+    <div class="pair">
+      <span class="pair-h"></span><span class="pair-h">MUA</span><span class="pair-h">BÁN</span>
+      <span class="pair-name">SJC miếng</span>
+      <span class="pair-num mono" id="sjcBuy">—</span>
+      <span class="pair-num mono sell" id="sjcSell">—</span>
+      <span class="pair-name" id="ringName">Nhẫn</span>
+      <span class="pair-num mono" id="ringBuy">—</span>
+      <span class="pair-num mono sell" id="ringSell">—</span>
+    </div>
+    <div class="sub">triệu đ/lượng · <span id="btmhSrc">nguồn: —</span></div>
+  </article>
+
+  <article class="card">
+    <div class="card-head">
+      <span class="label">USD/VND · VCB<span class="stale" id="usdStale" hidden>CŨ</span></span>
+    </div>
+    <div class="duo">
+      <div><div class="mini">MUA CK</div><div class="value-sm mono" id="usdBuy">—</div></div>
+      <div><div class="mini">BÁN RA</div><div class="value-sm mono" id="usdSell">—</div></div>
+    </div>
+    <div class="sub" id="usdSrc">tỷ giá niêm yết Vietcombank</div>
+  </article>
+
+  <article class="card">
+    <div class="card-head">
+      <span class="label">BITCOIN</span>
+      <span class="tag mono" id="btcChg">24h —</span>
+    </div>
+    <div class="value mono" id="btcVal">—</div>
+    <div class="sub" id="btcSub">BTC/USDT · Binance trực tiếp</div>
+  </article>
+
+  <article class="card">
+    <div class="card-head">
+      <span class="label">DẦU THÔ<span class="stale" id="oilStale" hidden>CŨ</span></span>
+    </div>
+    <div class="duo">
+      <div><div class="mini">BRENT</div><div class="value-sm mono" id="brentVal">—</div><div class="tag mono" id="brentChg"></div></div>
+      <div><div class="mini">WTI</div><div class="value-sm mono" id="wtiVal">—</div><div class="tag mono" id="wtiChg"></div></div>
+    </div>
+    <div class="sub">USD/thùng · <span id="oilSrc">nguồn: —</span></div>
+  </article>
+</div>
+
+<footer>
+  <b>Nguồn:</b> Binance (BTC, PAXG ≈ XAU/USD trực tiếp) · giavang.org (giá Bảo Tín Mạnh Hải) · Vietcombank (tỷ giá) · Yahoo Finance / Stooq (dầu).
+  Quy đổi vàng thế giới: 1 lượng = 1,20565 oz, theo <b>tỷ giá bán VCB</b>, chưa gồm thuế nhập khẩu và phí gia công.
+  Số liệu chỉ để tham khảo, không phải khuyến nghị đầu tư.
+</footer>
+
+</div>
+
+<script>
+"use strict";
+const LUONG_PER_OZ = 37.5 / 31.1034768; // ≈ 1,20565
+const $ = id => document.getElementById(id);
+
+const S = { btc:null, btcOpen:null, xau:null, xauOpen:null, J:null, prev:{} };
+
+/* ---------- format ---------- */
+const fUSD = (n, d) => n == null ? "—"
+  : n.toLocaleString("en-US", { minimumFractionDigits: d ?? (n >= 1000 ? 0 : 2),
+                                maximumFractionDigits: d ?? (n >= 1000 ? 0 : 2) });
+const fVND = n => n == null ? "—" : Math.round(n).toLocaleString("vi-VN");
+const fTr  = (n, d=2) => n == null ? "—"
+  : (n/1e6).toLocaleString("vi-VN", { minimumFractionDigits:d, maximumFractionDigits:d });
+const fPct = n => n == null || !isFinite(n) ? ""
+  : (n >= 0 ? "+" : "") + n.toLocaleString("vi-VN",{minimumFractionDigits:2,maximumFractionDigits:2}) + "%";
+
+function setText(id, txt){ const el = $(id); if (el && el.textContent !== txt) el.textContent = txt; }
+
+function setNum(id, val, text){ // text + hiệu ứng nháy khi đổi giá
+  const el = $(id); if (!el) return;
+  const old = S.prev[id];
+  if (el.textContent !== text){
+    el.textContent = text;
+    if (old != null && val != null && val !== old){
+      el.classList.remove("up","down"); void el.offsetWidth;
+      el.classList.add(val > old ? "up" : "down");
+    }
+  }
+  if (val != null) S.prev[id] = val;
+}
+
+function setChg(id, pct, prefix){
+  const el = $(id); if (!el) return;
+  el.textContent = pct == null || !isFinite(pct) ? "" : (prefix ?? "") + fPct(pct);
+  el.classList.toggle("up", pct > 0);
+  el.classList.toggle("down", pct < 0);
+}
+
+/* ---------- render: live (Binance) ---------- */
+function renderLive(){
+  if (S.btc != null){
+    setNum("btcVal", S.btc, fUSD(S.btc) + " $");
+    if (S.btcOpen) setChg("btcChg", (S.btc - S.btcOpen)/S.btcOpen*100, "24h ");
+    const sell = S.J?.usd_vnd?.sell;
+    setText("btcSub", sell
+      ? "≈ " + (S.btc*sell/1e9).toLocaleString("vi-VN",{minimumFractionDigits:2,maximumFractionDigits:2}) + " tỷ ₫ · Binance trực tiếp"
+      : "BTC/USDT · Binance trực tiếp");
+  }
+  if (S.xau != null){
+    setNum("xauVal", S.xau, fUSD(S.xau, 1) + " $/oz");
+    if (S.xauOpen) setChg("xauChg", (S.xau - S.xauOpen)/S.xauOpen*100, "24h ");
+    const sell = S.J?.usd_vnd?.sell;
+    setText("xauSub", sell
+      ? "≈ " + fTr(S.xau*sell*LUONG_PER_OZ) + " tr/lượng quy đổi · PAXG (Binance)"
+      : "XAU/USD · proxy PAXG (Binance)");
+  }
+  renderSpread();
+}
+
+/* ---------- render: chênh lệch ---------- */
+function renderSpread(){
+  const J = S.J;
+  const sell = J?.usd_vnd?.sell;
+  const g = J?.gold_btmh;
+  const domRow = (g?.ring?.sell != null) ? g.ring : (g?.sjc?.sell != null ? g.sjc : null);
+  const domLabel = domRow === g?.ring ? "Nhẫn (bán)" : "SJC (bán)";
+
+  if (S.xau == null || sell == null || !domRow){
+    setText("spreadVal", "—");
+    setText("spreadPct", "");
+    setText("spreadCalc", S.xau == null
+      ? "chờ giá vàng thế giới từ Binance…"
+      : "cần tỷ giá VCB + giá BTMH trong prices.json (chạy workflow lần đầu)");
+    return;
+  }
+  const world = S.xau * sell * LUONG_PER_OZ;
+  const d = domRow.sell - world;
+  setNum("spreadVal", Math.round(d/1e4), (d >= 0 ? "+" : "−") + fTr(Math.abs(d)) + " tr/lượng");
+  setText("spreadPct", fPct(d/world*100));
+  setText("spreadCalc",
+    domLabel + " " + fTr(domRow.sell) + " − TG quy đổi " + fTr(world) + " tr/lượng" +
+    "  ·  XAU " + fUSD(S.xau,0) + "$ × " + fVND(sell) + "₫ × 1,2057");
+}
+
+/* ---------- render: prices.json ---------- */
+function renderJSON(){
+  const J = S.J; if (!J) return;
+
+  const t = Date.parse(J.updated_at);
+  if (!isNaN(t)){
+    const dt = new Date(t);
+    setText("jsonTime", "dữ liệu: " +
+      dt.toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"}) + " " +
+      dt.toLocaleDateString("vi-VN",{day:"2-digit",month:"2-digit"}));
+    const old = Date.now() - t > 75*60*1000;
+    const note = $("jsonNote");
+    if (old){
+      note.hidden = false;
+      note.textContent = "Dữ liệu trong prices.json đã cũ (cập nhật lần cuối " +
+        dt.toLocaleString("vi-VN") + "). Kiểm tra workflow “Cập nhật giá” trên GitHub.";
+    } else if (note.textContent.startsWith("Dữ liệu trong prices.json")) {
+      note.hidden = true;
+    }
+  }
+
+  const g = J.gold_btmh;
+  if (g){
+    setNum("sjcBuy",  g.sjc?.buy,  fTr(g.sjc?.buy));
+    setNum("sjcSell", g.sjc?.sell, fTr(g.sjc?.sell));
+    setNum("ringBuy", g.ring?.buy, fTr(g.ring?.buy));
+    setNum("ringSell",g.ring?.sell,fTr(g.ring?.sell));
+    if (g.ring?.name) setText("ringName",
+      /kim gia bảo/i.test(g.ring.name) ? "Nhẫn KGB 999.9" :
+      /trang sức/i.test(g.ring.name)   ? "Trang sức 999.9" : "Nhẫn 999.9");
+    setText("btmhSrc", "nguồn lúc " + (g.source_time || "—"));
+    $("btmhStale").hidden = !g.stale;
+  }
+
+  const u = J.usd_vnd;
+  if (u){
+    setNum("usdBuy",  u.buy_transfer, fVND(u.buy_transfer));
+    setNum("usdSell", u.sell,         fVND(u.sell));
+    setText("usdSrc", (u.source || "Vietcombank") + (u.source_time ? " · " + u.source_time : ""));
+    $("usdStale").hidden = !u.stale;
+  }
+
+  const o = J.oil;
+  if (o){
+    setNum("brentVal", o.brent?.price, fUSD(o.brent?.price, 2));
+    setNum("wtiVal",   o.wti?.price,   fUSD(o.wti?.price, 2));
+    setChg("brentChg", o.brent?.prev_close ? (o.brent.price-o.brent.prev_close)/o.brent.prev_close*100 : null);
+    setChg("wtiChg",   o.wti?.prev_close   ? (o.wti.price-o.wti.prev_close)/o.wti.prev_close*100 : null);
+    setText("oilSrc", o.source || "—");
+    $("oilStale").hidden = !o.stale;
+  }
+
+  renderLive(); // cập nhật các dòng quy đổi phụ thuộc tỷ giá
+}
+
+/* ---------- nguồn dữ liệu ---------- */
+async function loadJSON(){
+  try{
+    const r = await fetch("prices.json", { cache: "no-store" });
+    if (!r.ok) throw new Error(r.status);
+    S.J = await r.json();
+    renderJSON();
+  }catch(e){
+    const note = $("jsonNote");
+    note.hidden = false;
+    note.textContent = "Chưa đọc được prices.json — nếu mới tạo repo, hãy chạy workflow “Cập nhật giá” (tab Actions) một lần.";
+  }
+}
+
+function seedBinance(){
+  fetch("https://api.binance.com/api/v3/ticker/24hr?symbols=" +
+        encodeURIComponent('["BTCUSDT","PAXGUSDT"]'))
+    .then(r => r.json())
+    .then(a => {
+      (a || []).forEach(t => {
+        if (t.symbol === "BTCUSDT"){ S.btc = +t.lastPrice; S.btcOpen = +t.openPrice; }
+        if (t.symbol === "PAXGUSDT"){ S.xau = +t.lastPrice; S.xauOpen = +t.openPrice; }
+      });
+      renderLive();
+    })
+    .catch(()=>{});
+}
+
+let wsRetry = 3000;
+function connectWS(){
+  let w;
+  try{
+    w = new WebSocket("wss://stream.binance.com:9443/stream?streams=btcusdt@miniTicker/paxgusdt@miniTicker");
+  }catch(e){ setTimeout(connectWS, wsRetry = Math.min(wsRetry*1.5, 30000)); return; }
+  w.onopen = () => {
+    wsRetry = 3000;
+    $("liveDot").classList.add("on");
+    setText("liveLabel", "Binance trực tiếp");
+  };
+  w.onmessage = e => {
+    const d = JSON.parse(e.data).data;
+    if (d.s === "BTCUSDT"){ S.btc = +d.c; S.btcOpen = +d.o; }
+    if (d.s === "PAXGUSDT"){ S.xau = +d.c; S.xauOpen = +d.o; }
+    renderLive();
+  };
+  w.onclose = () => {
+    $("liveDot").classList.remove("on");
+    setText("liveLabel", "mất kết nối — thử lại…");
+    setTimeout(connectWS, wsRetry = Math.min(wsRetry*1.5, 30000));
+  };
+  w.onerror = () => w.close();
+}
+
+setTimeout(() => {
+  if (S.btc == null) setText("liveLabel", "chưa kết nối được Binance — thử lại…");
+}, 8000);
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden){ loadJSON(); seedBinance(); }
+});
+
+loadJSON();
+setInterval(loadJSON, 5*60*1000);
+seedBinance();
+connectWS();
+</script>
+</body>
+</html>

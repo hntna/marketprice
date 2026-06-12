@@ -1,0 +1,14 @@
+{
+ "updated_at": "2026-06-10T15:35:04+07:00",
+ "note": "Dữ liệu mẫu khởi tạo (vàng BTMH lấy thật từ giavang.org lúc 15:35 10/06/2026). Chạy workflow 'Cập nhật giá' để ghi đè bằng dữ liệu mới.",
+ "gold_btmh": {
+  "source": "giavang.org (Bảo Tín Mạnh Hải)",
+  "source_time": "15:35:04 10/06/2026",
+  "unit": "VND/lượng",
+  "sjc": {"name": "Vàng miếng SJC (Cty CP BTMH)", "buy": 133300000, "sell": 138300000},
+  "ring": {"name": "Vàng Kim Gia Bảo 24K (999.9)", "buy": 133000000, "sell": 138300000}
+ },
+ "usd_vnd": null,
+ "oil": null,
+ "history": []
+}
