@@ -285,61 +285,67 @@ function renderSpread(){
 }
 
 /* ---------- render: prices.json ---------- */
+function renderJSON(){
+  const J = S.J; if (!J) return;
+
+  const t = Date.parse(J.updated_at);
+  if (!isNaN(t)){
+    const dt = new Date(t);
+    setText("jsonTime", "dữ liệu: " +
+      dt.toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"}) + " " +
+      dt.toLocaleDateString("vi-VN",{day:"2-digit",month:"2-digit"}));
+    const old = Date.now() - t > 75*60*1000;
+    const note = $("jsonNote");
+    if (old){
+      note.hidden = false;
+      note.textContent = "Dữ liệu trong prices.json đã cũ (cập nhật lần cuối " +
+        dt.toLocaleString("vi-VN") + "). Kiểm tra workflow “Cập nhật giá” trên GitHub.";
+    } else if (note.textContent.startsWith("Dữ liệu trong prices.json")) {
+      note.hidden = true;
+    }
+  }
+
+  const g = J.gold_btmh;
+  if (g){
+    setNum("sjcBuy",  g.sjc?.buy,  fTr(g.sjc?.buy));
+    setNum("sjcSell", g.sjc?.sell, fTr(g.sjc?.sell));
+    setNum("ringBuy", g.ring?.buy, fTr(g.ring?.buy));
+    setNum("ringSell",g.ring?.sell,fTr(g.ring?.sell));
+    if (g.ring?.name) setText("ringName",
+      /kim gia bảo/i.test(g.ring.name) ? "Nhẫn KGB 999.9" :
+      /trang sức/i.test(g.ring.name)   ? "Trang sức 999.9" : "Nhẫn 999.9");
+    setText("btmhSrc", "nguồn lúc " + (g.source_time || "—"));
+    $("btmhStale").hidden = !g.stale;
+  }
+
+  const u = J.usd_vnd;
+  if (u){
+    setNum("usdBuy",  u.buy_transfer, fVND(u.buy_transfer));
+    setNum("usdSell", u.sell,         fVND(u.sell));
+    setText("usdSrc", (u.source || "Vietcombank") + (u.source_time ? " · " + u.source_time : ""));
+    $("usdStale").hidden = !u.stale;
+  }
+
+  const o = J.oil;
+  if (o){
+    setNum("brentVal", o.brent?.price, fUSD(o.brent?.price, 2));
+    setNum("wtiVal",   o.wti?.price,   fUSD(o.wti?.price, 2));
+    setChg("brentChg", o.brent?.prev_close ? (o.brent.price-o.brent.prev_close)/o.brent.prev_close*100 : null);
+    setChg("wtiChg",   o.wti?.prev_close   ? (o.wti.price-o.wti.prev_close)/o.wti.prev_close*100 : null);
+    setText("oilSrc", o.source || "—");
+    $("oilStale").hidden = !o.stale;
+  }
+
+  renderLive(); // cập nhật các dòng quy đổi phụ thuộc tỷ giá
+}
+
+/* ---------- nguồn dữ liệu ---------- */
 async function loadJSON(){
   try{
     const r = await fetch("prices.json", { cache: "no-store" });
     if (!r.ok) throw new Error(r.status);
     S.J = await r.json();
-    
-    const t = Date.parse(S.J.updated_at);
-    if (!isNaN(t)){
-      const dt = new Date(t);
-      setText("jsonTime", "dữ liệu: " +
-        dt.toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"}) + " " +
-        dt.toLocaleDateString("vi-VN",{day:"2-digit",month:"2-digit"}));
-      const old = Date.now() - t > 75*60*1000;
-      const note = $("jsonNote");
-      if (old){
-        note.hidden = false;
-        note.textContent = "Dữ liệu trong prices.json đã cũ (cập nhật lần cuối " +
-          dt.toLocaleString("vi-VN") + "). Kiểm tra workflow “Cập nhật giá” trên GitHub.";
-      } else if (note.textContent.startsWith("Dữ liệu trong prices.json")) {
-        note.hidden = true;
-      }
-    }
-
-    const g = S.J.gold_btmh;
-    if (g){
-      setNum("sjcBuy",  g.sjc?.buy,  fTr(g.sjc?.buy));
-      setNum("sjcSell", g.sjc?.sell, fTr(g.sjc?.sell));
-      setNum("ringBuy", g.ring?.buy, fTr(g.ring?.buy));
-      setNum("ringSell",g.ring?.sell,fTr(g.ring?.sell));
-      if (g.ring?.name) setText("ringName",
-        /kim gia bảo/i.test(g.ring.name) ? "Nhẫn KGB 999.9" :
-        /trang sức/i.test(g.ring.name)   ? "Trang sức 999.9" : "Nhẫn 999.9");
-      setText("btmhSrc", "nguồn lúc " + (g.source_time || "—"));
-      $("btmhStale").hidden = !g.stale;
-    }
-
-    const u = S.J.usd_vnd;
-    if (u){
-      setNum("usdBuy",  u.buy_transfer, fVND(u.buy_transfer));
-      setNum("usdSell", u.sell,         fVND(u.sell));
-      setText("usdSrc", (u.source || "Vietcombank") + (u.source_time ? " · " + u.source_time : ""));
-      $("usdStale").hidden = !u.stale;
-    }
-
-    const o = S.J.oil;
-    if (o){
-      setNum("brentVal", o.brent?.price, fUSD(o.brent?.price, 2));
-      setNum("wtiVal",   o.wti?.price,   fUSD(o.wti?.price, 2));
-      setChg("brentChg", o.brent?.prev_close ? (o.brent.price-o.brent.prev_close)/o.brent.prev_close*100 : null);
-      setChg("wtiChg",   o.wti?.prev_close   ? (o.wti.price-o.wti.prev_close)/o.wti.prev_close*100 : null);
-      setText("oilSrc", o.source || "—");
-      $("oilStale").hidden = !o.stale;
-    }
-
-    renderLive();
+    renderJSON();
   }catch(e){
     const note = $("jsonNote");
     note.hidden = false;
@@ -400,23 +406,28 @@ function initCharts() {
   }
 }
 
-function fetchChartData() {
-  if (!S.J) return;
+async function fetchChartData() {
   try {
-    const mapData = (d) => ({ time: d[0] / 1000, value: d[1] });
-    const btcData = S.J.chart_btc || [];
-    const xauData = S.J.chart_xau || [];
+    const [btcRes, xauRes] = await Promise.all([
+      fetch("https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=120"),
+      fetch("https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=1h&limit=120")
+    ]);
+    const btcData = await btcRes.json();
+    const xauData = await xauRes.json();
 
-    if (btcSeries && btcData.length) {
+    const mapData = (d) => ({ time: d[0] / 1000, value: parseFloat(d[4]) });
+
+    if (btcSeries) {
       btcSeries.setData(btcData.map(mapData));
       btcChart.timeScale().fitContent();
     }
-    if (xauSeries && xauData.length) {
+    if (xauSeries) {
       xauSeries.setData(xauData.map(mapData));
       xauChart.timeScale().fitContent();
     }
   } catch(e) {
-    console.error("Failed to render chart data", e);
+    console.error("Failed to fetch chart data", e);
+    if ($("btcChart")) $("btcChart").innerHTML = `<span style="font-size:10px;color:red">Chart Error: ${e.message}</span>`;
   }
 }
 
@@ -459,14 +470,14 @@ setTimeout(() => {
 }, 5000);
 
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden){ loadJSON().then(fetchChartData); seedBinance(); }
+  if (!document.hidden){ loadJSON(); seedBinance(); }
 });
 
-loadJSON().then(() => {
-  initCharts();
-  fetchChartData();
-});
+loadJSON();
+setInterval(loadJSON, 5*60*1000);
 seedBinance();
+initCharts();
+fetchChartData();
 connectWS();
 </script>
 </body>
