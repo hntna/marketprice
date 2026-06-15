@@ -42,25 +42,11 @@ h1{font-size:26px;font-weight:800;letter-spacing:.06em}
 .notice{margin:0 0 14px;padding:10px 14px;border:1px solid var(--amber-dim);border-radius:10px;
   color:var(--amber);font-size:13px;background:rgba(242,179,61,.06)}
 
-/* ---------- hàng trên: bảng chênh lệch + vàng TG ---------- */
-.row-top{display:grid;gap:14px;grid-template-columns:1fr;margin-bottom:14px}
-@media(min-width:880px){.row-top{grid-template-columns:1.65fr 1fr}}
-
-.board{
-  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:14px;
-  background:linear-gradient(180deg,#0D1016,#090B10);
-  padding:20px 22px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;
-}
-.board::after{ /* vân quét kiểu bảng LED tiệm vàng */
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px);
-}
-.board-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
-.board-value{
-  font-size:clamp(38px,7vw,62px);font-weight:600;line-height:1.05;color:var(--amber);letter-spacing:.02em;
-  text-shadow:0 0 22px rgba(242,179,61,.32), 0 0 2px rgba(242,179,61,.55);
-}
-.board-sub{color:var(--muted);font-size:12.5px;line-height:1.6}
+/* ---------- history tags ---------- */
+.tags-row { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+.tag-mini { font-size: 11.5px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.05); color: var(--muted); font-family: var(--mono); }
+.tag-mini.up { color: var(--up); background: rgba(61,220,151,0.1); }
+.tag-mini.down { color: var(--down); background: rgba(252,109,123,0.15); }
 
 /* ---------- cards ---------- */
 .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(235px,1fr))}
@@ -120,28 +106,25 @@ footer b{color:var(--muted);font-weight:600}
 
 <div class="notice" id="jsonNote" hidden></div>
 
-<div class="row-top">
-  <section class="board">
-    <div class="board-head">
-      <span class="label">CHÊNH LỆCH VÀNG · TRONG NƯỚC − THẾ GIỚI</span>
-      <span class="tag mono" id="spreadPct"></span>
+<div class="grid">
+  <article class="card">
+    <div class="card-head">
+      <span class="label">CHÊNH LỆCH VÀNG</span>
     </div>
-    <div class="board-value mono" id="spreadVal">—</div>
-    <div class="board-sub mono" id="spreadCalc">chờ dữ liệu Binance + prices.json…</div>
-  </section>
+    <div class="value mono" id="spreadVal">—</div>
+    <div class="tags-row" id="spreadTags"></div>
+    <div class="sub mono" id="spreadCalc" style="margin-top:4px">chờ dữ liệu...</div>
+  </article>
 
   <article class="card">
     <div class="card-head">
       <span class="label">VÀNG THẾ GIỚI</span>
-      <span class="tag mono" id="xauChg">24h —</span>
     </div>
     <div class="value mono" id="xauVal">—</div>
-    <div class="sub" id="xauSub">XAU/USD · proxy PAXG (Binance)</div>
+    <div class="tags-row" id="xauTags"></div>
+    <div class="sub" id="xauSub" style="margin-top:4px">XAU/USD · proxy PAXG (Binance)</div>
     <div id="xauChart" class="chart-container" onclick="window.open('https://www.binance.com/en/trade/PAXG_USDT', '_blank')" style="cursor:pointer" title="Xem trên Binance"></div>
   </article>
-</div>
-
-<div class="grid">
   <article class="card">
     <div class="card-head">
       <span class="label">VÀNG BTMH<span class="stale" id="btmhStale" hidden>CŨ</span></span>
@@ -155,6 +138,7 @@ footer b{color:var(--muted);font-weight:600}
       <span class="pair-num mono" id="ringBuy">—</span>
       <span class="pair-num mono sell" id="ringSell">—</span>
     </div>
+    <div class="tags-row" id="sjcTags"></div>
     <div class="sub">triệu đ/lượng · <span id="btmhSrc">nguồn: —</span></div>
     <div id="btmhChart" class="chart-container" onclick="window.open('https://giavang.org', '_blank')" style="cursor:pointer" title="Xem trên giavang.org"></div>
   </article>
@@ -167,6 +151,7 @@ footer b{color:var(--muted);font-weight:600}
       <div><div class="mini">MUA CK</div><div class="value-sm mono" id="usdBuy">—</div></div>
       <div><div class="mini">BÁN RA</div><div class="value-sm mono" id="usdSell">—</div></div>
     </div>
+    <div class="tags-row" id="usdTags"></div>
     <div class="sub" id="usdSrc">tỷ giá niêm yết Vietcombank</div>
     <div id="usdChart" class="chart-container" onclick="window.open('https://portal.vietcombank.com.vn', '_blank')" style="cursor:pointer" title="Xem trên Vietcombank"></div>
   </article>
@@ -174,10 +159,10 @@ footer b{color:var(--muted);font-weight:600}
   <article class="card">
     <div class="card-head">
       <span class="label">BITCOIN</span>
-      <span class="tag mono" id="btcChg">24h —</span>
     </div>
     <div class="value mono" id="btcVal">—</div>
-    <div class="sub" id="btcSub">BTC/USDT · Binance trực tiếp</div>
+    <div class="tags-row" id="btcTags"></div>
+    <div class="sub" id="btcSub" style="margin-top:4px">BTC/USDT · Binance trực tiếp</div>
     <div id="btcChart" class="chart-container" onclick="window.open('https://www.binance.com/en/trade/BTC_USDT', '_blank')" style="cursor:pointer" title="Xem trên Binance"></div>
   </article>
 
@@ -186,8 +171,14 @@ footer b{color:var(--muted);font-weight:600}
       <span class="label">DẦU THÔ<span class="stale" id="oilStale" hidden>CŨ</span></span>
     </div>
     <div class="duo">
-      <div><div class="mini">BRENT</div><div class="value-sm mono" id="brentVal">—</div><div class="tag mono" id="brentChg"></div></div>
-      <div><div class="mini">WTI</div><div class="value-sm mono" id="wtiVal">—</div><div class="tag mono" id="wtiChg"></div></div>
+      <div>
+        <div class="mini">BRENT</div><div class="value-sm mono" id="brentVal">—</div>
+        <div class="tags-row" id="brentTags"></div>
+      </div>
+      <div>
+        <div class="mini">WTI</div><div class="value-sm mono" id="wtiVal">—</div>
+        <div class="tags-row" id="wtiTags"></div>
+      </div>
     </div>
     <div class="sub">USD/thùng · <span id="oilSrc">nguồn: —</span></div>
     <div id="oilChart" class="chart-container" onclick="window.open('https://finance.yahoo.com/quote/BZ=F', '_blank')" style="cursor:pointer" title="Xem trên Yahoo Finance"></div>
@@ -198,8 +189,14 @@ footer b{color:var(--muted);font-weight:600}
       <span class="label">CHỨNG KHOÁN<span class="stale" id="idxStale" hidden>CŨ</span></span>
     </div>
     <div class="duo">
-      <div><div class="mini">VN-INDEX</div><div class="value-sm mono" id="vniVal">—</div><div class="tag mono" id="vniChg"></div></div>
-      <div><div class="mini">S&P 500</div><div class="value-sm mono" id="spxVal">—</div><div class="tag mono" id="spxChg"></div></div>
+      <div>
+        <div class="mini">VN-INDEX</div><div class="value-sm mono" id="vniVal">—</div>
+        <div class="tags-row" id="vniTags"></div>
+      </div>
+      <div>
+        <div class="mini">S&P 500</div><div class="value-sm mono" id="spxVal">—</div>
+        <div class="tags-row" id="spxTags"></div>
+      </div>
     </div>
     <div class="sub">điểm · <span id="idxSrc">nguồn: CafeF / Yahoo</span></div>
     <div id="vniChart" class="chart-container" onclick="window.open('https://banggia.cafef.vn', '_blank')" style="cursor:pointer; height:50px; margin-bottom:4px" title="VN-INDEX"></div>
@@ -301,6 +298,71 @@ function renderSpread(){
     "  ·  XAU " + fUSD(S.xau,0) + "$ × " + fVND(sell) + "₫ × 1,2057");
 }
 
+function renderHistoryTags() {
+  if (!S.J || !S.J.history || !S.J.history.length) return;
+  const hist = S.J.history;
+  const DAY = 86400000;
+  let nowT = Date.now();
+  const lastT = new Date(hist[hist.length-1].t).getTime();
+  if (nowT - lastT > DAY) nowT = lastT; 
+
+  const findVal = (msAgo, key) => {
+    const targetT = nowT - msAgo;
+    let closest = null;
+    let minDiff = Infinity;
+    for (let i = hist.length - 1; i >= 0; i--) {
+      const h = hist[i];
+      if (h[key] == null) continue;
+      const t = new Date(h.t).getTime();
+      const diff = Math.abs(t - targetT);
+      if (diff < minDiff && diff < DAY * 1.5) { 
+        minDiff = diff;
+        closest = h[key];
+      }
+    }
+    return closest;
+  };
+
+  const getTagsHtml = (key) => {
+    let current = null;
+    for (let i = hist.length - 1; i >= 0; i--) {
+      if (hist[i][key] != null) { current = hist[i][key]; break; }
+    }
+    if (current == null) return "";
+
+    const v24h = findVal(DAY, key);
+    const v1w = findVal(DAY * 7, key);
+    const v1m = findVal(DAY * 30, key);
+
+    const makeTag = (label, oldV) => {
+      if (oldV == null) return `<span class="tag-mini">${label} —%</span>`;
+      const pct = (current - oldV) / oldV * 100;
+      const cls = Math.abs(pct) < 0.01 ? "" : (pct > 0 ? "up" : "down");
+      const sign = pct > 0 ? "+" : (pct < 0 ? "−" : "");
+      return `<span class="tag-mini ${cls}">${label} ${sign}${fTr(Math.abs(pct))}%</span>`;
+    };
+
+    return makeTag("24h", v24h) + makeTag("1w", v1w) + makeTag("1m", v1m);
+  };
+
+  const map = {
+    "spreadTags": "spread",
+    "xauTags": "xau",
+    "sjcTags": "gold_sjc_sell",
+    "usdTags": "usd_sell",
+    "btcTags": "btc",
+    "brentTags": "brent",
+    "wtiTags": "wti",
+    "vniTags": "vnindex",
+    "spxTags": "spx"
+  };
+
+  for (let id in map) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = getTagsHtml(map[id]);
+  }
+}
+
 /* ---------- render: prices.json ---------- */
 async function loadJSON(){
   try{
@@ -350,8 +412,6 @@ async function loadJSON(){
     if (o){
       setNum("brentVal", o.brent?.price, fUSD(o.brent?.price, 2));
       setNum("wtiVal",   o.wti?.price,   fUSD(o.wti?.price, 2));
-      setChg("brentChg", o.brent?.prev_close ? (o.brent.price-o.brent.prev_close)/o.brent.prev_close*100 : null);
-      setChg("wtiChg",   o.wti?.prev_close   ? (o.wti.price-o.wti.prev_close)/o.wti.prev_close*100 : null);
       setText("oilSrc", o.source || "—");
       $("oilStale").hidden = !o.stale;
     }
@@ -359,13 +419,12 @@ async function loadJSON(){
     const idx = S.J.indices;
     if (idx) {
       setNum("vniVal", idx.vnindex?.price, fUSD(idx.vnindex?.price, 2));
-      setChg("vniChg", idx.vnindex?.percent);
       setNum("spxVal", idx.spx?.price, fUSD(idx.spx?.price, 2));
-      setChg("spxChg", idx.spx?.prev_close ? (idx.spx.price - idx.spx.prev_close)/idx.spx.prev_close*100 : null);
       setText("idxSrc", "nguồn: " + (idx.source || "—"));
       $("idxStale").hidden = !idx.stale;
     }
 
+    renderHistoryTags();
     renderLive();
   }catch(e){
     const note = $("jsonNote");

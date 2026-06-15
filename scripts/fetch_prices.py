@@ -29,7 +29,7 @@ UA = {
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "prices.json"
 TZ = ZoneInfo("Asia/Ho_Chi_Minh")
-HISTORY_MAX = 200  # ~2 ngày với chu kỳ 15 phút
+HISTORY_MAX = 3500  # ~36 ngày với chu kỳ 15 phút
 
 
 def get(url, **kw):
@@ -267,11 +267,15 @@ def main():
         xau_res = get("https://api.binance.com/api/v3/klines", params={"symbol": "PAXGUSDT", "interval": "1h", "limit": 120}).json()
         data["chart_btc"] = [[c[0], float(c[4])] for c in btc_res]
         data["chart_xau"] = [[c[0], float(c[4])] for c in xau_res]
+        data["btc_price"] = data["chart_btc"][-1][1] if data["chart_btc"] else None
+        data["xau_price"] = data["chart_xau"][-1][1] if data["chart_xau"] else None
         ok += 1
     except Exception as e:
         print(f"[warn] binance klines lỗi: {e}", file=sys.stderr)
         if prev.get("chart_btc"): data["chart_btc"] = prev["chart_btc"]
         if prev.get("chart_xau"): data["chart_xau"] = prev["chart_xau"]
+        data["btc_price"] = data["chart_btc"][-1][1] if data.get("chart_btc") else None
+        data["xau_price"] = data["chart_xau"][-1][1] if data.get("chart_xau") else None
 
     if ok == 0 and prev:
         print("Tất cả nguồn đều lỗi — giữ nguyên prices.json cũ.", file=sys.stderr)
@@ -288,10 +292,27 @@ def main():
     except Exception: pass
     try: point["brent"] = (data["oil"].get("brent") or {}).get("price")
     except Exception: pass
+    try: point["wti"] = (data["oil"].get("wti") or {}).get("price")
+    except Exception: pass
     try: point["vnindex"] = (data.get("indices") or {}).get("vnindex", {}).get("price")
     except Exception: pass
     try: point["spx"] = (data.get("indices") or {}).get("spx", {}).get("price")
     except Exception: pass
+    try: point["btc"] = data.get("btc_price")
+    except Exception: pass
+    try: point["xau"] = data.get("xau_price")
+    except Exception: pass
+    
+    # Tính chênh lệch vàng SJC - Thế giới
+    try:
+        sjc_sell = point.get("gold_sjc_sell")
+        xau = point.get("xau")
+        usd = point.get("usd_sell")
+        if sjc_sell and xau and usd:
+            world = xau * usd * 1.20565
+            point["spread"] = sjc_sell - world
+    except Exception: pass
+    
     hist.append(point)
     data["history"] = hist[-HISTORY_MAX:]
 
