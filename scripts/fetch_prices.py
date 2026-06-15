@@ -207,6 +207,36 @@ def fetch_oil():
     raise ValueError("dầu: cả hai nguồn đều lỗi")
 
 
+# ---------------------------------------------------------------- Indices
+def fetch_indices():
+    out = {"source": "CafeF / Yahoo", "vnindex": None, "spx": None}
+    
+    # VNINDEX from CafeF
+    try:
+        r = get("https://banggia.cafef.vn/stockhandler.ashx?index=true")
+        data = r.json()
+        for idx in data:
+            if idx.get("name") == "VNINDEX":
+                out["vnindex"] = {
+                    "price": float(idx["index"].replace(",", "")),
+                    "change": float(idx["change"].replace(",", "")),
+                    "percent": float(idx["percent"].replace(",", ""))
+                }
+                break
+    except Exception as e:
+        print(f"[warn] CafeF VNINDEX lỗi: {e}", file=sys.stderr)
+
+    # SPX from Yahoo
+    try:
+        out["spx"] = yahoo_quote("^GSPC")
+    except Exception as e:
+        print(f"[warn] Yahoo SPX lỗi: {e}", file=sys.stderr)
+        
+    if not out["vnindex"] and not out["spx"]:
+        raise ValueError("Cả VNINDEX và SPX đều lỗi")
+    return out
+
+
 # ---------------------------------------------------------------- main
 def main():
     prev = {}
@@ -221,7 +251,8 @@ def main():
     ok = 0
     for key, fn in (("gold_btmh", fetch_btmh),
                     ("usd_vnd", fetch_vcb_usd),
-                    ("oil", fetch_oil)):
+                    ("oil", fetch_oil),
+                    ("indices", fetch_indices)):
         try:
             data[key] = fn()
             ok += 1
@@ -249,24 +280,23 @@ def main():
     # History rolling để sau này vẽ sparkline nếu muốn
     hist = list(prev.get("history") or [])
     point = {"t": data["updated_at"]}
-    try:
-        point["usd_sell"] = data["usd_vnd"].get("sell")
-    except Exception:  # noqa: BLE001
-        pass
-    try:
-        point["gold_ring_sell"] = (data["gold_btmh"].get("ring") or {}).get("sell")
-        point["gold_sjc_sell"] = (data["gold_btmh"].get("sjc") or {}).get("sell")
-    except Exception:  # noqa: BLE001
-        pass
-    try:
-        point["brent"] = (data["oil"].get("brent") or {}).get("price")
-    except Exception:  # noqa: BLE001
-        pass
+    try: point["usd_sell"] = data["usd_vnd"].get("sell")
+    except Exception: pass
+    try: point["gold_ring_sell"] = (data["gold_btmh"].get("ring") or {}).get("sell")
+    except Exception: pass
+    try: point["gold_sjc_sell"] = (data["gold_btmh"].get("sjc") or {}).get("sell")
+    except Exception: pass
+    try: point["brent"] = (data["oil"].get("brent") or {}).get("price")
+    except Exception: pass
+    try: point["vnindex"] = (data.get("indices") or {}).get("vnindex", {}).get("price")
+    except Exception: pass
+    try: point["spx"] = (data.get("indices") or {}).get("spx", {}).get("price")
+    except Exception: pass
     hist.append(point)
     data["history"] = hist[-HISTORY_MAX:]
 
     OUT.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
-    print(f"Đã ghi {OUT.name} ({ok}/3 nguồn thành công, {now:%H:%M %d/%m/%Y})")
+    print(f"Đã ghi {OUT.name} ({ok}/5 nguồn thành công, {now:%H:%M %d/%m/%Y})")
     return 0
 
 

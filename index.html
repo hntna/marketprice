@@ -192,6 +192,19 @@ footer b{color:var(--muted);font-weight:600}
     <div class="sub">USD/thùng · <span id="oilSrc">nguồn: —</span></div>
     <div id="oilChart" class="chart-container" onclick="window.open('https://finance.yahoo.com/quote/BZ=F', '_blank')" style="cursor:pointer" title="Xem trên Yahoo Finance"></div>
   </article>
+
+  <article class="card">
+    <div class="card-head">
+      <span class="label">CHỨNG KHOÁN<span class="stale" id="idxStale" hidden>CŨ</span></span>
+    </div>
+    <div class="duo">
+      <div><div class="mini">VN-INDEX</div><div class="value-sm mono" id="vniVal">—</div><div class="tag mono" id="vniChg"></div></div>
+      <div><div class="mini">S&P 500</div><div class="value-sm mono" id="spxVal">—</div><div class="tag mono" id="spxChg"></div></div>
+    </div>
+    <div class="sub">điểm · <span id="idxSrc">nguồn: CafeF / Yahoo</span></div>
+    <div id="vniChart" class="chart-container" onclick="window.open('https://banggia.cafef.vn', '_blank')" style="cursor:pointer; height:50px; margin-bottom:4px" title="VN-INDEX"></div>
+    <div id="spxChart" class="chart-container" onclick="window.open('https://finance.yahoo.com/quote/%5EGSPC', '_blank')" style="cursor:pointer; height:50px" title="S&P 500"></div>
+  </article>
 </div>
 
 <footer>
@@ -343,6 +356,16 @@ async function loadJSON(){
       $("oilStale").hidden = !o.stale;
     }
 
+    const idx = S.J.indices;
+    if (idx) {
+      setNum("vniVal", idx.vnindex?.price, fUSD(idx.vnindex?.price, 2));
+      setChg("vniChg", idx.vnindex?.percent);
+      setNum("spxVal", idx.spx?.price, fUSD(idx.spx?.price, 2));
+      setChg("spxChg", idx.spx?.prev_close ? (idx.spx.price - idx.spx.prev_close)/idx.spx.prev_close*100 : null);
+      setText("idxSrc", "nguồn: " + (idx.source || "—"));
+      $("idxStale").hidden = !idx.stale;
+    }
+
     renderLive();
   }catch(e){
     const note = $("jsonNote");
@@ -407,6 +430,8 @@ function initCharts() {
   makeChart("btmhChart", "#F2B33D", "rgba(242,179,61,0.25)");
   makeChart("usdChart", "#3DDC97", "rgba(61,220,151,0.25)");
   makeChart("oilChart", "#FC6D7B", "rgba(252,109,123,0.25)");
+  makeChart("vniChart", "#3DDC97", "rgba(61,220,151,0.25)");
+  makeChart("spxChart", "#3DDC97", "rgba(61,220,151,0.25)");
 }
 
 function fetchChartData() {
@@ -428,7 +453,7 @@ function fetchChartData() {
   applyData("xauChart", S.J.chart_xau);
 
   if (S.J.history && S.J.history.length) {
-    const btmhData = [], usdData = [], oilData = [];
+    const btmhData = [], usdData = [], oilData = [], vniData = [], spxData = [];
     let lastTime = 0;
     for (let h of S.J.history) {
       const t = Math.floor(new Date(h.t).getTime() / 1000);
@@ -436,12 +461,16 @@ function fetchChartData() {
         if (h.gold_sjc_sell) btmhData.push([t * 1000, h.gold_sjc_sell]);
         if (h.usd_sell) usdData.push([t * 1000, h.usd_sell]);
         if (h.brent) oilData.push([t * 1000, h.brent]);
+        if (h.vnindex) vniData.push([t * 1000, h.vnindex]);
+        if (h.spx) spxData.push([t * 1000, h.spx]);
         lastTime = t;
       }
     }
     applyData("btmhChart", btmhData);
     applyData("usdChart", usdData);
     applyData("oilChart", oilData);
+    applyData("vniChart", vniData);
+    applyData("spxChart", spxData);
   }
 }
 
