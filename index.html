@@ -114,6 +114,7 @@ footer b{color:var(--muted);font-weight:600}
   <div class="status">
     <span class="dot" id="liveDot"></span><span id="liveLabel">đang kết nối Binance…</span>
     <span class="sep">·</span><span id="jsonTime">dữ liệu: —</span>
+    <a href="https://github.com/hntna/marketprice/actions/workflows/update-prices.yml" target="_blank" title="Mở trang chạy Workflow cập nhật giá" style="color: inherit; text-decoration: none; margin-left: 6px; font-size: 14px; opacity: 0.6; cursor: pointer;">🔄</a>
   </div>
 </header>
 
@@ -136,7 +137,7 @@ footer b{color:var(--muted);font-weight:600}
     </div>
     <div class="value mono" id="xauVal">—</div>
     <div class="sub" id="xauSub">XAU/USD · proxy PAXG (Binance)</div>
-    <div id="xauChart" class="chart-container"></div>
+    <div id="xauChart" class="chart-container" onclick="window.open('https://www.binance.com/en/trade/PAXG_USDT', '_blank')" style="cursor:pointer" title="Xem trên Binance"></div>
   </article>
 </div>
 
@@ -155,6 +156,7 @@ footer b{color:var(--muted);font-weight:600}
       <span class="pair-num mono sell" id="ringSell">—</span>
     </div>
     <div class="sub">triệu đ/lượng · <span id="btmhSrc">nguồn: —</span></div>
+    <div id="btmhChart" class="chart-container" onclick="window.open('https://giavang.org', '_blank')" style="cursor:pointer" title="Xem trên giavang.org"></div>
   </article>
 
   <article class="card">
@@ -166,6 +168,7 @@ footer b{color:var(--muted);font-weight:600}
       <div><div class="mini">BÁN RA</div><div class="value-sm mono" id="usdSell">—</div></div>
     </div>
     <div class="sub" id="usdSrc">tỷ giá niêm yết Vietcombank</div>
+    <div id="usdChart" class="chart-container" onclick="window.open('https://portal.vietcombank.com.vn', '_blank')" style="cursor:pointer" title="Xem trên Vietcombank"></div>
   </article>
 
   <article class="card">
@@ -175,7 +178,7 @@ footer b{color:var(--muted);font-weight:600}
     </div>
     <div class="value mono" id="btcVal">—</div>
     <div class="sub" id="btcSub">BTC/USDT · Binance trực tiếp</div>
-    <div id="btcChart" class="chart-container"></div>
+    <div id="btcChart" class="chart-container" onclick="window.open('https://www.binance.com/en/trade/BTC_USDT', '_blank')" style="cursor:pointer" title="Xem trên Binance"></div>
   </article>
 
   <article class="card">
@@ -187,6 +190,7 @@ footer b{color:var(--muted);font-weight:600}
       <div><div class="mini">WTI</div><div class="value-sm mono" id="wtiVal">—</div><div class="tag mono" id="wtiChg"></div></div>
     </div>
     <div class="sub">USD/thùng · <span id="oilSrc">nguồn: —</span></div>
+    <div id="oilChart" class="chart-container" onclick="window.open('https://finance.yahoo.com/quote/BZ=F', '_blank')" style="cursor:pointer" title="Xem trên Yahoo Finance"></div>
   </article>
 </div>
 
@@ -361,7 +365,7 @@ function seedBinance(){
     .catch(()=>{});
 }
 
-let btcChart, btcSeries, xauChart, xauSeries;
+let charts = {};
 function initCharts() {
   const chartOptions = {
     layout: { background: { type: 'solid', color: 'transparent' }, textColor: '#8B91A1' },
@@ -377,68 +381,74 @@ function initCharts() {
     for (let entry of entries) {
       const { width, height } = entry.contentRect;
       if (width > 0 && height > 0) {
-        if (entry.target.id === "btcChart" && btcChart) btcChart.resize(width, height);
-        if (entry.target.id === "xauChart" && xauChart) xauChart.resize(width, height);
+        if (charts[entry.target.id]) charts[entry.target.id].chart.resize(width, height);
       }
     }
   });
 
-  const bEl = $("btcChart");
-  if (bEl && !btcChart) {
+  function makeChart(id, lineC, topC) {
+    const el = $(id);
+    if (!el || charts[id]) return;
     try {
-      const w = bEl.clientWidth || 300; const h = bEl.clientHeight || 70;
-      btcChart = LightweightCharts.createChart(bEl, Object.assign({width: w, height: h}, chartOptions));
-      btcSeries = btcChart.addAreaSeries({
-        lineColor: '#3DDC97', topColor: 'rgba(61,220,151,0.25)', bottomColor: 'rgba(61,220,151,0.0)', lineWidth: 2, priceLineVisible: false
+      const w = el.clientWidth || 300; const h = el.clientHeight || 70;
+      const chart = LightweightCharts.createChart(el, Object.assign({width: w, height: h}, chartOptions));
+      const series = chart.addAreaSeries({
+        lineColor: lineC, topColor: topC, bottomColor: 'rgba(0,0,0,0)', lineWidth: 2, priceLineVisible: false
       });
-      ro.observe(bEl);
+      ro.observe(el);
+      charts[id] = { chart, series };
     } catch(e) {
-      bEl.innerHTML = "<div style='color:red;font-size:10px;margin-top:20px'>BTC err: " + e.message + "</div>";
+      el.innerHTML = "<div style='color:red;font-size:10px;margin-top:20px'>" + id + " err: " + e.message + "</div>";
     }
   }
 
-  const xEl = $("xauChart");
-  if (xEl && !xauChart) {
-    try {
-      const w = xEl.clientWidth || 300; const h = xEl.clientHeight || 70;
-      xauChart = LightweightCharts.createChart(xEl, Object.assign({width: w, height: h}, chartOptions));
-      xauSeries = xauChart.addAreaSeries({
-        lineColor: '#F2B33D', topColor: 'rgba(242,179,61,0.25)', bottomColor: 'rgba(242,179,61,0.0)', lineWidth: 2, priceLineVisible: false
-      });
-      ro.observe(xEl);
-    } catch(e) {
-      xEl.innerHTML = "<div style='color:red;font-size:10px;margin-top:20px'>XAU err: " + e.message + "</div>";
-    }
-  }
+  makeChart("btcChart", "#3DDC97", "rgba(61,220,151,0.25)");
+  makeChart("xauChart", "#F2B33D", "rgba(242,179,61,0.25)");
+  makeChart("btmhChart", "#F2B33D", "rgba(242,179,61,0.25)");
+  makeChart("usdChart", "#3DDC97", "rgba(61,220,151,0.25)");
+  makeChart("oilChart", "#FC6D7B", "rgba(252,109,123,0.25)");
 }
 
 function fetchChartData() {
   if (!S.J) return;
   const mapData = (d) => ({ time: d[0] / 1000, value: d[1] });
   
-  if (btcSeries && S.J.chart_btc && S.J.chart_btc.length) {
-    try {
-      btcSeries.setData(S.J.chart_btc.map(mapData));
-      btcChart.timeScale().fitContent();
-    } catch(e) {
-      $("btcChart").innerHTML = "<div style='color:red;font-size:10px;margin-top:20px'>BTC Data err: " + e.message + "</div>";
+  function applyData(id, dataArr) {
+    if (charts[id] && dataArr && dataArr.length) {
+      try {
+        charts[id].series.setData(dataArr.map(mapData));
+        charts[id].chart.timeScale().fitContent();
+      } catch(e) {
+        $(id).innerHTML = "<div style='color:red;font-size:10px;margin-top:20px'>" + id + " Data err: " + e.message + "</div>";
+      }
     }
   }
 
-  if (xauSeries && S.J.chart_xau && S.J.chart_xau.length) {
-    try {
-      xauSeries.setData(S.J.chart_xau.map(mapData));
-      xauChart.timeScale().fitContent();
-    } catch(e) {
-      $("xauChart").innerHTML = "<div style='color:red;font-size:10px;margin-top:20px'>XAU Data err: " + e.message + "</div>";
+  applyData("btcChart", S.J.chart_btc);
+  applyData("xauChart", S.J.chart_xau);
+
+  if (S.J.history && S.J.history.length) {
+    const btmhData = [], usdData = [], oilData = [];
+    let lastTime = 0;
+    for (let h of S.J.history) {
+      const t = Math.floor(new Date(h.t).getTime() / 1000);
+      if (t > lastTime && !isNaN(t)) {
+        if (h.gold_sjc_sell) btmhData.push([t * 1000, h.gold_sjc_sell]);
+        if (h.usd_sell) usdData.push([t * 1000, h.usd_sell]);
+        if (h.brent) oilData.push([t * 1000, h.brent]);
+        lastTime = t;
+      }
     }
+    applyData("btmhChart", btmhData);
+    applyData("usdChart", usdData);
+    applyData("oilChart", oilData);
   }
 }
 
 function updateChartLive(symbol, price, timeMs) {
   const candleTime = Math.floor(timeMs / 3600000) * 3600;
-  if (symbol === "BTCUSDT" && btcSeries) btcSeries.update({ time: candleTime, value: price });
-  if (symbol === "PAXGUSDT" && xauSeries) xauSeries.update({ time: candleTime, value: price });
+  if (symbol === "BTCUSDT" && charts.btcChart) charts.btcChart.series.update({ time: candleTime, value: price });
+  if (symbol === "PAXGUSDT" && charts.xauChart) charts.xauChart.series.update({ time: candleTime, value: price });
 }
 
 let wsRetry = 3000;
