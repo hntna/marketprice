@@ -107,14 +107,6 @@ footer b{color:var(--muted);font-weight:600}
 <div class="notice" id="jsonNote" hidden></div>
 
 <div class="grid">
-  <article class="card">
-    <div class="card-head">
-      <span class="label">CHÊNH LỆCH VÀNG</span>
-    </div>
-    <div class="value mono" id="spreadVal">—</div>
-    <div class="tags-row" id="spreadTags"></div>
-    <div class="sub mono" id="spreadCalc" style="margin-top:4px">chờ dữ liệu...</div>
-  </article>
 
   <article class="card">
     <div class="card-head">
@@ -139,6 +131,10 @@ footer b{color:var(--muted);font-weight:600}
       <span class="pair-num mono sell" id="ringSell">—</span>
     </div>
     <div class="tags-row" id="sjcTags"></div>
+    <div class="sub" style="margin-top:2px" id="spreadCalcTitle" title="chờ dữ liệu...">
+      Chênh SJC-TG: <strong class="mono sell" id="spreadVal">—</strong>
+      <span class="tags-row" id="spreadTags" style="display:inline-flex; margin-top:0; margin-left:4px"></span>
+    </div>
     <div class="sub">triệu đ/lượng · <span id="btmhSrc">nguồn: —</span></div>
     <div id="btmhChart" class="chart-container" onclick="window.open('https://giavang.org', '_blank')" style="cursor:pointer" title="Xem trên giavang.org"></div>
   </article>
@@ -291,11 +287,13 @@ function renderSpread(){
   }
   const world = S.xau * sell * LUONG_PER_OZ;
   const d = domRow.sell - world;
-  setNum("spreadVal", Math.round(d/1e4), (d >= 0 ? "+" : "−") + fTr(Math.abs(d)) + " tr/lượng");
-  setText("spreadPct", fPct(d/world*100));
-  setText("spreadCalc",
-    domLabel + " " + fTr(domRow.sell) + " − TG quy đổi " + fTr(world) + " tr/lượng" +
-    "  ·  XAU " + fUSD(S.xau,0) + "$ × " + fVND(sell) + "₫ × 1,2057");
+  setNum("spreadVal", Math.round(d/1e4), (d >= 0 ? "+" : "−") + fTr(Math.abs(d)));
+  
+  const titleEl = document.getElementById("spreadCalcTitle");
+  if (titleEl) {
+    titleEl.title = domLabel + " " + fTr(domRow.sell) + " − TG quy đổi " + fTr(world) + " tr/lượng" +
+      "  ·  XAU " + fUSD(S.xau,0) + "$ × " + fVND(sell) + "₫ × 1,2057";
+  }
 }
 
 function renderHistoryTags() {
