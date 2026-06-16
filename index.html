@@ -364,7 +364,11 @@ function renderHistoryTags() {
 /* ---------- render: prices.json ---------- */
 async function loadJSON(){
   try{
-    const r = await fetch("prices.json", { cache: "no-store" });
+    // Lấy trực tiếp từ nhánh main để không bị phụ thuộc vào tốc độ build của GitHub Pages
+    const url = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:")
+      ? "prices.json?t=" + Date.now()
+      : "https://raw.githubusercontent.com/hntna/marketprice/main/prices.json?t=" + Date.now();
+    const r = await fetch(url);
     if (!r.ok) throw new Error(r.status);
     S.J = await r.json();
     
