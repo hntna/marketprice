@@ -1,6 +1,9 @@
 name: Cập nhật giá
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: "*/15 * * * *"   # mỗi 15 phút (giờ UTC, có thể trễ vài phút)
   workflow_dispatch: {}       # cho phép bấm "Run workflow" chạy tay
