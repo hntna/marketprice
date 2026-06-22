@@ -1,5 +1,5 @@
 {
- "updated_at": "2026-06-22T10:44:13+07:00",
+ "updated_at": "2026-06-22T10:45:00+07:00",
  "gold_btmh": {
   "source": "giavang.org (Bảo Tín Mạnh Hải)",
   "source_time": "10:40:05 22/06/2026",
@@ -30,16 +30,16 @@
    "prev_close": 79.85
   },
   "wti": {
-   "price": 75.82,
+   "price": 75.8,
    "prev_close": 75.85
   }
  },
  "indices": {
   "source": "CafeF / Yahoo",
   "vnindex": {
-   "price": 1849.83,
-   "change": 25.3,
-   "percent": 1.39
+   "price": 1849.51,
+   "change": 24.98,
+   "percent": 1.37
   },
   "spx": {
    "price": 7500.58,
@@ -5854,6 +5854,19 @@
    "brent": 79.54,
    "wti": 75.82,
    "vnindex": 1849.83,
+   "spx": 7500.58,
+   "btc": 64081.98828125,
+   "xau": 4197.0,
+   "spread": 14900490.731899992
+  },
+  {
+   "t": "2026-06-22T10:45:00+07:00",
+   "usd_sell": 26442.0,
+   "gold_ring_sell": 148500000,
+   "gold_sjc_sell": 148700000,
+   "brent": 79.54,
+   "wti": 75.8,
+   "vnindex": 1849.51,
    "spx": 7500.58,
    "btc": 64081.98828125,
    "xau": 4197.0,
