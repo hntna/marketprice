@@ -261,17 +261,24 @@ def main():
             if prev.get(key):
                 data[key] = {**prev[key], "stale": True}
 
-    # Fetch chart data directly from Binance to avoid client-side AdBlockers
+    # Fetch chart data directly from Yahoo Finance
     try:
-        btc_res = get("https://api.binance.com/api/v3/klines", params={"symbol": "BTCUSDT", "interval": "1h", "limit": 120}).json()
-        xau_res = get("https://api.binance.com/api/v3/klines", params={"symbol": "PAXGUSDT", "interval": "1h", "limit": 120}).json()
-        data["chart_btc"] = [[c[0], float(c[4])] for c in btc_res]
-        data["chart_xau"] = [[c[0], float(c[4])] for c in xau_res]
+        btc_res = get("https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD?range=1mo&interval=1h", headers={"User-Agent": "Mozilla/5.0"}).json()
+        xau_res = get("https://query1.finance.yahoo.com/v8/finance/chart/GC=F?range=1mo&interval=1h", headers={"User-Agent": "Mozilla/5.0"}).json()
+        
+        def extract_chart(res):
+            result = res.get("chart", {}).get("result", [])[0]
+            timestamps = result.get("timestamp", [])
+            closes = result.get("indicators", {}).get("quote", [{}])[0].get("close", [])
+            return [[t * 1000, float(c)] for t, c in zip(timestamps, closes) if c is not None]
+
+        data["chart_btc"] = extract_chart(btc_res)
+        data["chart_xau"] = extract_chart(xau_res)
         data["btc_price"] = data["chart_btc"][-1][1] if data["chart_btc"] else None
         data["xau_price"] = data["chart_xau"][-1][1] if data["chart_xau"] else None
         ok += 1
     except Exception as e:
-        print(f"[warn] binance klines lỗi: {e}", file=sys.stderr)
+        print(f"[warn] Yahoo charts lỗi: {e}", file=sys.stderr)
         if prev.get("chart_btc"): data["chart_btc"] = prev["chart_btc"]
         if prev.get("chart_xau"): data["chart_xau"] = prev["chart_xau"]
         data["btc_price"] = data["chart_btc"][-1][1] if data.get("chart_btc") else None
