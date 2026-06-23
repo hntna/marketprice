@@ -337,7 +337,8 @@ function renderHistoryTags() {
       const pct = (current - oldV) / oldV * 100;
       const cls = Math.abs(pct) < 0.01 ? "" : (pct > 0 ? "up" : "down");
       const sign = pct > 0 ? "+" : (pct < 0 ? "−" : "");
-      return `<span class="tag-mini ${cls}">${label} ${sign}${fTr(Math.abs(pct))}%</span>`;
+      const valStr = Math.abs(pct).toLocaleString("vi-VN", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      return `<span class="tag-mini ${cls}">${label} ${sign}${valStr}%</span>`;
     };
 
     return makeTag("24h", v24h) + makeTag("1w", v1w) + makeTag("1m", v1m);
