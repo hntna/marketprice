@@ -1,5 +1,5 @@
 {
- "updated_at": "2026-06-29T03:14:51+07:00",
+ "updated_at": "2026-06-29T04:31:45+07:00",
  "gold_btmh": {
   "source": "giavang.org (Bảo Tín Mạnh Hải)",
   "source_time": "22:55:07 28/06/2026",
@@ -17,7 +17,7 @@
  },
  "usd_vnd": {
   "source": "Vietcombank (pXML)",
-  "source_time": "6/29/2026 3:13:43 AM",
+  "source_time": "6/29/2026 4:17:01 AM",
   "buy_cash": 26084.0,
   "buy_transfer": 26114.0,
   "sell": 26454.0
@@ -6758,6 +6758,19 @@
   },
   {
    "t": "2026-06-29T03:14:51+07:00",
+   "usd_sell": 26454.0,
+   "gold_ring_sell": 148300000,
+   "gold_sjc_sell": 148500000,
+   "brent": 72.6,
+   "wti": 69.23,
+   "vnindex": 1871.91,
+   "spx": 7354.02,
+   "btc": 64081.98828125,
+   "xau": 4197.0,
+   "spread": 14639769.37529999
+  },
+  {
+   "t": "2026-06-29T04:31:45+07:00",
    "usd_sell": 26454.0,
    "gold_ring_sell": 148300000,
    "gold_sjc_sell": 148500000,
