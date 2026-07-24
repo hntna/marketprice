@@ -1,13 +1,13 @@
 {
- "updated_at": "2026-07-24T11:33:21+07:00",
+ "updated_at": "2026-07-24T14:18:20+07:00",
  "gold_btmh": {
   "source": "giavang.org (Bảo Tín Mạnh Hải)",
-  "source_time": "11:30:04 24/07/2026",
+  "source_time": "14:15:03 24/07/2026",
   "unit": "VND/lượng",
   "sjc": {
    "name": "Vàng miếng SJC (Cty CP BTMH)",
-   "buy": 134000000,
-   "sell": 138500000
+   "buy": 134500000,
+   "sell": 139000000
   },
   "ring": {
    "name": "Vàng Kim Gia Bảo 24K (999.9)",
@@ -17,7 +17,7 @@
  },
  "usd_vnd": {
   "source": "Vietcombank (pXML)",
-  "source_time": "7/24/2026 11:32:51 AM",
+  "source_time": "7/24/2026 2:15:51 PM",
   "buy_cash": 26100.0,
   "buy_transfer": 26130.0,
   "sell": 26510.0
@@ -26,20 +26,20 @@
   "source": "Yahoo Finance",
   "unit": "USD/thùng",
   "brent": {
-   "price": 100.5,
+   "price": 99.04,
    "prev_close": 100.69
   },
   "wti": {
-   "price": 91.73,
+   "price": 90.63,
    "prev_close": 92.19
   }
  },
  "indices": {
   "source": "CafeF / Yahoo",
   "vnindex": {
-   "price": 1693.61,
-   "change": -5.77,
-   "percent": -0.34
+   "price": 1688.67,
+   "change": -10.71,
+   "percent": -0.63
   },
   "spx": {
    "price": 7408.3,
@@ -10889,6 +10889,19 @@
    "btc": 64081.98828125,
    "xau": 4197.0,
    "spread": 4356403.044499993
+  },
+  {
+   "t": "2026-07-24T14:18:20+07:00",
+   "usd_sell": 26510.0,
+   "gold_ring_sell": 142500000,
+   "gold_sjc_sell": 139000000,
+   "brent": 99.04,
+   "wti": 90.63,
+   "vnindex": 1688.67,
+   "spx": 7408.3,
+   "btc": 64081.98828125,
+   "xau": 4197.0,
+   "spread": 4856403.044499993
   }
  ]
 }
