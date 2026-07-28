@@ -1,5 +1,5 @@
 {
- "updated_at": "2026-07-29T00:55:28+07:00",
+ "updated_at": "2026-07-29T02:27:34+07:00",
  "gold_btmh": {
   "source": "giavang.org (Bảo Tín Mạnh Hải)",
   "source_time": "22:55:02 28/07/2026",
@@ -17,7 +17,7 @@
  },
  "usd_vnd": {
   "source": "Vietcombank (pXML)",
-  "source_time": "7/29/2026 12:52:29 AM",
+  "source_time": "7/29/2026 2:23:37 AM",
   "buy_cash": 26115.0,
   "buy_transfer": 26145.0,
   "sell": 26525.0
@@ -26,11 +26,11 @@
   "source": "Yahoo Finance",
   "unit": "USD/thùng",
   "brent": {
-   "price": 84.39,
+   "price": 83.86,
    "prev_close": 88.36
   },
   "wti": {
-   "price": 79.25,
+   "price": 79.06,
    "prev_close": 82.61
   }
  },
@@ -42,7 +42,7 @@
    "percent": 0.7
   },
   "spx": {
-   "price": 7430.42,
+   "price": 7437.14,
    "prev_close": 7413.18
   }
  },
@@ -11666,6 +11666,19 @@
    "wti": 79.25,
    "vnindex": 1680.62,
    "spx": 7430.42,
+   "btc": 64081.98828125,
+   "xau": 4197.0,
+   "spread": 7280501.348749995
+  },
+  {
+   "t": "2026-07-29T02:27:34+07:00",
+   "usd_sell": 26525.0,
+   "gold_ring_sell": 142000000,
+   "gold_sjc_sell": 141500000,
+   "brent": 83.86,
+   "wti": 79.06,
+   "vnindex": 1680.62,
+   "spx": 7437.14,
    "btc": 64081.98828125,
    "xau": 4197.0,
    "spread": 7280501.348749995
