@@ -1,8 +1,8 @@
 {
- "updated_at": "2026-09-24T05:46:48+07:00",
+ "updated_at": "2026-09-24T08:11:12+07:00",
  "gold_btmh": {
   "source": "giavang.org (Bảo Tín Mạnh Hải)",
-  "source_time": "22:55:02 23/09/2026",
+  "source_time": "08:10:04 24/09/2026",
   "unit": "VND/lượng",
   "sjc": {
    "name": "Vàng miếng SJC (Cty CP BTMH)",
@@ -17,7 +17,7 @@
  },
  "usd_vnd": {
   "source": "Vietcombank (pXML)",
-  "source_time": "9/24/2026 5:44:34 AM",
+  "source_time": "9/24/2026 7:59:13 AM",
   "buy_cash": 25780.0,
   "buy_transfer": 25810.0,
   "sell": 26190.0
@@ -26,11 +26,11 @@
   "source": "Yahoo Finance",
   "unit": "USD/thùng",
   "brent": {
-   "price": 98.21,
+   "price": 97.35,
    "prev_close": 98.12
   },
   "wti": {
-   "price": 92.46,
+   "price": 91.5,
    "prev_close": 92.16
   }
  },
@@ -23220,6 +23220,19 @@
    "gold_sjc_sell": 145500000,
    "brent": 98.21,
    "wti": 92.46,
+   "vnindex": 1801.65,
+   "spx": 7706.03,
+   "btc": 64081.98828125,
+   "xau": 4197.0,
+   "spread": 12975639.220499992
+  },
+  {
+   "t": "2026-09-24T08:11:12+07:00",
+   "usd_sell": 26190.0,
+   "gold_ring_sell": 146300000,
+   "gold_sjc_sell": 145500000,
+   "brent": 97.35,
+   "wti": 91.5,
    "vnindex": 1801.65,
    "spx": 7706.03,
    "btc": 64081.98828125,
